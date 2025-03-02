@@ -4,6 +4,12 @@ package:
     - console
     - effect
     - prelude
+    - arrays
+    - integers
+    - strings
+    - node-process
+    - maybe
+    - foldable-traversable
   test:
     main: Test.Main
     dependencies: []
