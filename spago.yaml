@@ -2,12 +2,10 @@ package:
   name: franck-hertz
   dependencies:
     - console
-    - effect
     - prelude
     - arrays
     - integers
     - strings
-    - node-process
     - maybe
     - foldable-traversable
     - foreign-object

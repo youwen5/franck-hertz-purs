@@ -98,9 +98,6 @@ var $$const = function(a) {
   };
 };
 
-// output/Data.Unit/foreign.js
-var unit = void 0;
-
 // output/Data.Functor/index.js
 var map = function(dict) {
   return dict.map;
@@ -126,41 +123,6 @@ var append = function(dict) {
   return dict.append;
 };
 
-// output/Control.Apply/index.js
-var apply = function(dict) {
-  return dict.apply;
-};
-
-// output/Control.Applicative/index.js
-var pure = function(dict) {
-  return dict.pure;
-};
-var when = function(dictApplicative) {
-  var pure1 = pure(dictApplicative);
-  return function(v) {
-    return function(v1) {
-      if (v) {
-        return v1;
-      }
-      ;
-      if (!v) {
-        return pure1(unit);
-      }
-      ;
-      throw new Error("Failed pattern match at Control.Applicative (line 63, column 1 - line 63, column 63): " + [v.constructor.name, v1.constructor.name]);
-    };
-  };
-};
-var liftA1 = function(dictApplicative) {
-  var apply2 = apply(dictApplicative.Apply0());
-  var pure1 = pure(dictApplicative);
-  return function(f) {
-    return function(a) {
-      return apply2(pure1(f))(a);
-    };
-  };
-};
-
 // output/Control.Bind/foreign.js
 var arrayBind = typeof Array.prototype.flatMap === "function" ? function(arr) {
   return function(f) {
@@ -178,26 +140,6 @@ var arrayBind = typeof Array.prototype.flatMap === "function" ? function(arr) {
       }
     }
     return result;
-  };
-};
-
-// output/Control.Bind/index.js
-var bind = function(dict) {
-  return dict.bind;
-};
-
-// output/Control.Monad/index.js
-var ap = function(dictMonad) {
-  var bind2 = bind(dictMonad.Bind1());
-  var pure3 = pure(dictMonad.Applicative0());
-  return function(f) {
-    return function(a) {
-      return bind2(f)(function(f$prime) {
-        return bind2(a)(function(a$prime) {
-          return pure3(f$prime(a$prime));
-        });
-      });
-    };
   };
 };
 
@@ -378,26 +320,6 @@ var bottom = function(dict) {
   return dict.bottom;
 };
 
-// output/Data.Show/foreign.js
-var showIntImpl = function(n) {
-  return n.toString();
-};
-var showNumberImpl = function(n) {
-  var str = n.toString();
-  return isNaN(str + ".0") ? str : str + ".0";
-};
-
-// output/Data.Show/index.js
-var showNumber = {
-  show: showNumberImpl
-};
-var showInt = {
-  show: showIntImpl
-};
-var show = function(dict) {
-  return dict.show;
-};
-
 // output/Data.Maybe/index.js
 var identity2 = /* @__PURE__ */ identity(categoryFn);
 var Nothing = /* @__PURE__ */ function() {
@@ -478,67 +400,6 @@ var euclideanRingInt = {
 var mempty = function(dict) {
   return dict.mempty;
 };
-
-// output/Effect/foreign.js
-var pureE = function(a) {
-  return function() {
-    return a;
-  };
-};
-var bindE = function(a) {
-  return function(f) {
-    return function() {
-      return f(a())();
-    };
-  };
-};
-
-// output/Effect/index.js
-var $runtime_lazy = function(name, moduleName, init) {
-  var state = 0;
-  var val;
-  return function(lineNumber) {
-    if (state === 2) return val;
-    if (state === 1) throw new ReferenceError(name + " was needed before it finished initializing (module " + moduleName + ", line " + lineNumber + ")", moduleName, lineNumber);
-    state = 1;
-    val = init();
-    state = 2;
-    return val;
-  };
-};
-var monadEffect = {
-  Applicative0: function() {
-    return applicativeEffect;
-  },
-  Bind1: function() {
-    return bindEffect;
-  }
-};
-var bindEffect = {
-  bind: bindE,
-  Apply0: function() {
-    return $lazy_applyEffect(0);
-  }
-};
-var applicativeEffect = {
-  pure: pureE,
-  Apply0: function() {
-    return $lazy_applyEffect(0);
-  }
-};
-var $lazy_functorEffect = /* @__PURE__ */ $runtime_lazy("functorEffect", "Effect", function() {
-  return {
-    map: liftA1(applicativeEffect)
-  };
-});
-var $lazy_applyEffect = /* @__PURE__ */ $runtime_lazy("applyEffect", "Effect", function() {
-  return {
-    apply: ap(monadEffect),
-    Functor0: function() {
-      return $lazy_functorEffect(0);
-    }
-  };
-});
 
 // output/Data.Foldable/foreign.js
 var foldrArray = function(f) {
@@ -759,13 +620,6 @@ var mkRandomState = function(seed) {
   };
 };
 
-// output/Effect.Console/foreign.js
-var log2 = function(s) {
-  return function() {
-    console.log(s);
-  };
-};
-
 // output/Model/index.js
 var mercuryExcitationEnergy = 4.9;
 var maxElectrons = 1e3;
@@ -941,11 +795,6 @@ var step = function(state) {
 
 // output/Simulation/index.js
 var map3 = /* @__PURE__ */ map(functorArray);
-var pure2 = /* @__PURE__ */ pure(applicativeEffect);
-var when2 = /* @__PURE__ */ when(applicativeEffect);
-var mod4 = /* @__PURE__ */ mod(euclideanRingInt);
-var show2 = /* @__PURE__ */ show(showInt);
-var show1 = /* @__PURE__ */ show(showNumber);
 var simulateVoltageSweep = function(initialState2) {
   return function(initialRandomState) {
     return function(startVoltage) {
@@ -956,76 +805,98 @@ var simulateVoltageSweep = function(initialState2) {
             var voltageSteps = map3(function(i) {
               return startVoltage + stepSize * toNumber(i);
             })(range2(0)(totalSteps));
-            var simulateSteps = function(v) {
-              return function(v1) {
-                return function(v2) {
-                  if (v2 === 0) {
-                    return pure2({
-                      state: v,
-                      randomState: v1
-                    });
+            var simulateSteps = function($copy_v) {
+              return function($copy_v1) {
+                return function($copy_v2) {
+                  var $tco_var_v = $copy_v;
+                  var $tco_var_v1 = $copy_v1;
+                  var $tco_done = false;
+                  var $tco_result;
+                  function $tco_loop(v, v1, v2) {
+                    if (v2 === 0) {
+                      $tco_done = true;
+                      return {
+                        state: v,
+                        randomState: v1
+                      };
+                    }
+                    ;
+                    var v3 = step(v)(v1);
+                    $tco_var_v = v3.newState;
+                    $tco_var_v1 = v3.randomState;
+                    $copy_v2 = v2 - 1 | 0;
+                    return;
                   }
                   ;
-                  var v3 = step(v)(v1);
-                  return function __do() {
-                    when2(mod4(v2)(100) === 0)(log2("  Step " + (show2(stepsPerVoltage - v2 | 0) + ("/" + (show2(stepsPerVoltage) + (" - Collected: " + (show2(v3.newState.collectedCount) + (" - Current: " + show1(v3.newState.currentReading)))))))))();
-                    return simulateSteps(v3.newState)(v3.randomState)(v2 - 1 | 0)();
-                  };
+                  while (!$tco_done) {
+                    $tco_result = $tco_loop($tco_var_v, $tco_var_v1, $copy_v2);
+                  }
+                  ;
+                  return $tco_result;
                 };
               };
             };
             var simulateVoltage = function(state) {
               return function(randomState) {
                 return function(voltage) {
-                  return function __do() {
-                    log2("Simulating with voltage: " + (show1(voltage) + "V"))();
-                    var stateWithVoltage = {
-                      collectedCount: state.collectedCount,
-                      currentReading: state.currentReading,
-                      electrons: state.electrons,
-                      mercuryDensity: state.mercuryDensity,
-                      readings: state.readings,
-                      timeStep: state.timeStep,
-                      voltageSteps: state.voltageSteps,
-                      settings: {
-                        filamentVoltage: state.settings.filamentVoltage,
-                        retardingVoltage: state.settings.retardingVoltage,
-                        acceleratingVoltage: voltage
-                      }
-                    };
-                    return simulateSteps(stateWithVoltage)(randomState)(stepsPerVoltage)();
+                  var stateWithVoltage = {
+                    collectedCount: state.collectedCount,
+                    currentReading: state.currentReading,
+                    electrons: state.electrons,
+                    mercuryDensity: state.mercuryDensity,
+                    readings: state.readings,
+                    timeStep: state.timeStep,
+                    voltageSteps: state.voltageSteps,
+                    settings: {
+                      filamentVoltage: state.settings.filamentVoltage,
+                      retardingVoltage: state.settings.retardingVoltage,
+                      acceleratingVoltage: voltage
+                    }
                   };
+                  return simulateSteps(stateWithVoltage)(randomState)(stepsPerVoltage);
                 };
               };
             };
-            var runSweep = function(state) {
-              return function(randomState) {
-                return function(voltages) {
-                  var v = uncons(voltages);
-                  if (v instanceof Nothing) {
-                    return pure2({
-                      state,
-                      randomState
-                    });
+            var runSweep = function($copy_state) {
+              return function($copy_randomState) {
+                return function($copy_voltages) {
+                  var $tco_var_state = $copy_state;
+                  var $tco_var_randomState = $copy_randomState;
+                  var $tco_done1 = false;
+                  var $tco_result;
+                  function $tco_loop(state, randomState, voltages) {
+                    var v = uncons(voltages);
+                    if (v instanceof Nothing) {
+                      $tco_done1 = true;
+                      return {
+                        state,
+                        randomState
+                      };
+                    }
+                    ;
+                    if (v instanceof Just) {
+                      var result1 = simulateVoltage(state)(randomState)(v.value0.head);
+                      $tco_var_state = result1.state;
+                      $tco_var_randomState = result1.randomState;
+                      $copy_voltages = v.value0.tail;
+                      return;
+                    }
+                    ;
+                    throw new Error("Failed pattern match at Simulation (line 38, column 43 - line 44, column 54): " + [v.constructor.name]);
                   }
                   ;
-                  if (v instanceof Just) {
-                    return function __do() {
-                      var result = simulateVoltage(state)(randomState)(v.value0.head)();
-                      return runSweep(result.state)(result.randomState)(v.value0.tail)();
-                    };
+                  while (!$tco_done1) {
+                    $tco_result = $tco_loop($tco_var_state, $tco_var_randomState, $copy_voltages);
                   }
                   ;
-                  throw new Error("Failed pattern match at Simulation (line 47, column 43 - line 51, column 54): " + [v.constructor.name]);
+                  return $tco_result;
                 };
               };
             };
-            return function __do() {
-              var result = runSweep(initialState2)(initialRandomState)(voltageSteps)();
-              return {
-                finalState: result.state,
-                finalRandomState: result.randomState
-              };
+            var result = runSweep(initialState2)(initialRandomState)(voltageSteps);
+            return {
+              finalState: result.state,
+              finalRandomState: result.randomState
             };
           };
         };
@@ -1075,67 +946,65 @@ var runFranckHertzExperiment = function(filamentVoltage) {
                 };
               }();
               var randomState = mkRandomState(randomSeed);
-              return function __do() {
-                var v = simulateVoltageSweep(state0)(randomState)(initialAcceleratingVoltage)(finalAcceleratingVoltage)(voltageStep)(500)();
-                var findPeaks = function(voltages) {
-                  return function(currents) {
-                    var isPeak = function(i) {
-                      var prev = fromMaybe(0)(index(currents)(i - 1 | 0));
-                      var next = fromMaybe(0)(index(currents)(i + 1 | 0));
-                      var curr = fromMaybe(0)(index(currents)(i));
-                      return curr > prev && curr > next;
-                    };
-                    var indicesToCheck = range2(1)(length(currents) - 2 | 0);
-                    var peakIndices = filter(isPeak)(indicesToCheck);
-                    return map4(function(i) {
-                      return fromMaybe(0)(index(voltages)(i));
-                    })(peakIndices);
+              var result = simulateVoltageSweep(state0)(randomState)(initialAcceleratingVoltage)(finalAcceleratingVoltage)(voltageStep)(500);
+              var findPeaks = function(voltages) {
+                return function(currents) {
+                  var isPeak = function(i) {
+                    var prev = fromMaybe(0)(index(currents)(i - 1 | 0));
+                    var next = fromMaybe(0)(index(currents)(i + 1 | 0));
+                    var curr = fromMaybe(0)(index(currents)(i));
+                    return curr > prev && curr > next;
                   };
+                  var indicesToCheck = range2(1)(length(currents) - 2 | 0);
+                  var peakIndices = filter(isPeak)(indicesToCheck);
+                  return map4(function(i) {
+                    return fromMaybe(0)(index(voltages)(i));
+                  })(peakIndices);
                 };
-                var peakVoltages = findPeaks(v.finalState.voltageSteps)(v.finalState.readings);
-                var findDips = function(voltages) {
-                  return function(currents) {
-                    var isDip = function(i) {
-                      var prev = fromMaybe(0)(index(currents)(i - 1 | 0));
-                      var next = fromMaybe(0)(index(currents)(i + 1 | 0));
-                      var curr = fromMaybe(0)(index(currents)(i));
-                      return curr < prev && curr < next;
-                    };
-                    var indicesToCheck = range2(1)(length(currents) - 2 | 0);
-                    var dipIndices = filter(isDip)(indicesToCheck);
-                    return map4(function(i) {
-                      return fromMaybe(0)(index(voltages)(i));
-                    })(dipIndices);
+              };
+              var findDips = function(voltages) {
+                return function(currents) {
+                  var isDip = function(i) {
+                    var prev = fromMaybe(0)(index(currents)(i - 1 | 0));
+                    var next = fromMaybe(0)(index(currents)(i + 1 | 0));
+                    var curr = fromMaybe(0)(index(currents)(i));
+                    return curr < prev && curr < next;
                   };
+                  var indicesToCheck = range2(1)(length(currents) - 2 | 0);
+                  var dipIndices = filter(isDip)(indicesToCheck);
+                  return map4(function(i) {
+                    return fromMaybe(0)(index(voltages)(i));
+                  })(dipIndices);
                 };
-                var dipVoltages = findDips(v.finalState.voltageSteps)(v.finalState.readings);
-                var calculateAverageSpacing = function(voltages) {
-                  var v1 = length(voltages);
-                  if (v1 === 0) {
-                    return 0;
-                  }
-                  ;
-                  if (v1 === 1) {
-                    return 0;
-                  }
-                  ;
-                  var pairs = zip(voltages)(drop(1)(voltages));
-                  var differences = map4(function(v2) {
-                    return v2.value1 - v2.value0;
-                  })(pairs);
-                  var total = sum2(differences);
-                  return total / toNumber(length(differences));
-                };
-                var averageSpacing = calculateAverageSpacing(peakVoltages);
-                return {
-                  voltages: v.finalState.voltageSteps,
-                  currents: v.finalState.readings,
-                  peakVoltages,
-                  dipVoltages,
-                  averageSpacing,
-                  totalElectrons: v.finalState.collectedCount,
-                  timeSteps: v.finalState.timeStep
-                };
+              };
+              var peakVoltages = findPeaks(result.finalState.voltageSteps)(result.finalState.readings);
+              var dipVoltages = findDips(result.finalState.voltageSteps)(result.finalState.readings);
+              var calculateAverageSpacing = function(voltages) {
+                var v = length(voltages);
+                if (v === 0) {
+                  return 0;
+                }
+                ;
+                if (v === 1) {
+                  return 0;
+                }
+                ;
+                var pairs = zip(voltages)(drop(1)(voltages));
+                var differences = map4(function(v1) {
+                  return v1.value1 - v1.value0;
+                })(pairs);
+                var total = sum2(differences);
+                return total / toNumber(length(differences));
+              };
+              var averageSpacing = calculateAverageSpacing(peakVoltages);
+              return {
+                voltages: result.finalState.voltageSteps,
+                currents: result.finalState.readings,
+                peakVoltages,
+                dipVoltages,
+                averageSpacing,
+                totalElectrons: result.finalState.collectedCount,
+                timeSteps: result.finalState.timeStep
               };
             };
           };
