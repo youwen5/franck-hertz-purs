@@ -10,6 +10,8 @@ package:
     - node-process
     - maybe
     - foldable-traversable
+    - foreign-object
+    - foreign
   test:
     main: Test.Main
     dependencies: []

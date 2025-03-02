@@ -60,6 +60,7 @@
               purs-backend-es
               purescript-language-server
               nodejs
+              esbuild
             ];
           };
         }

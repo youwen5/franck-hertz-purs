@@ -1,7 +1,7 @@
 {
   "workspace": {
     "packages": {
-      "frank-hertz": {
+      "franck-hertz": {
         "path": "./",
         "core": {
           "dependencies": [
@@ -9,6 +9,8 @@
             "console",
             "effect",
             "foldable-traversable",
+            "foreign",
+            "foreign-object",
             "integers",
             "maybe",
             "node-process",
