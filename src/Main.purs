@@ -43,7 +43,7 @@ runSimulation = do
 -- | Main function to run the Frank-Hertz experiment simulation
 main :: Effect Unit
 main = do
-  log "Frank-Hertz Experiment Simulation"
+  log "Franck-Hertz Experiment Simulation"
   log "=================================="
   
   -- Get user settings

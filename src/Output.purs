@@ -17,7 +17,7 @@ import Model (ExperimentState)
 -- | Display the experiment results
 displayResults :: ExperimentState -> Effect Unit
 displayResults state = do
-  log "\n=== Frank-Hertz Experiment Results ==="
+  log "\n=== Franck-Hertz Experiment Results ==="
   log $ "Total electrons collected: " <> show state.collectedCount
   log $ "Total time steps: " <> show state.timeStep
   

@@ -1,5 +1,5 @@
 package:
-  name: frank-hertz
+  name: franck-hertz
   dependencies:
     - console
     - effect
