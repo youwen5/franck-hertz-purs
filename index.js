@@ -593,6 +593,10 @@ var round2 = function($37) {
   return unsafeClamp(round($37));
 };
 
+// output/Model/index.js
+var mercuryExcitationEnergy = 4.9;
+var maxElectrons = 1e3;
+
 // output/Random/index.js
 var mod2 = /* @__PURE__ */ mod(euclideanRingInt);
 var randomDouble = function(state) {
@@ -619,10 +623,6 @@ var mkRandomState = function(seed) {
     seed
   };
 };
-
-// output/Model/index.js
-var mercuryExcitationEnergy = 4.9;
-var maxElectrons = 1e3;
 
 // output/Physics/index.js
 var min3 = /* @__PURE__ */ min(ordInt);
@@ -908,6 +908,21 @@ var simulateVoltageSweep = function(initialState2) {
 // output/Main/index.js
 var map4 = /* @__PURE__ */ map(functorArray);
 var sum2 = /* @__PURE__ */ sum(foldableArray)(semiringNumber);
+var singleStep = function(state) {
+  return function(randomState) {
+    return step(state)(randomState);
+  };
+};
+var stepSimulation = function(state) {
+  return function(randomSeed) {
+    var randomState = mkRandomState(round2(randomSeed));
+    var result = singleStep(state)(randomState);
+    return {
+      newState: result.newState,
+      randomSeed: toNumber(result.randomState.seed)
+    };
+  };
+};
 var initialState = function(settings) {
   return {
     electrons: [],
@@ -1013,7 +1028,19 @@ var runFranckHertzExperiment = function(filamentVoltage) {
     };
   };
 };
+var main = runFranckHertzExperiment;
+var createDefaultState = /* @__PURE__ */ initialState({
+  filamentVoltage: 6,
+  acceleratingVoltage: 0,
+  retardingVoltage: 1.5
+});
+var createDefaultRandomState = /* @__PURE__ */ mkRandomState(12345);
 export {
+  createDefaultRandomState,
+  createDefaultState,
   initialState,
-  runFranckHertzExperiment
+  main,
+  runFranckHertzExperiment,
+  singleStep,
+  stepSimulation
 };

@@ -14,15 +14,19 @@ mkRandomState seed = { seed }
 -- | Generate a random number between 0 and 1, and return the new state
 randomDouble :: RandomState -> { value :: Number, newState :: RandomState }
 randomDouble state =
-  let a = 1664525
-      c = 1013904223
-      m = 2147483647
-      newSeed = (a * state.seed + c) `mod` m
-      value = toNumber newSeed / toNumber m
-  in { value, newState: { seed: newSeed } }
+  let
+    a = 1664525
+    c = 1013904223
+    m = 2147483647
+    newSeed = (a * state.seed + c) `mod` m
+    value = toNumber newSeed / toNumber m
+  in
+    { value, newState: { seed: newSeed } }
 
 -- | Generate a random boolean with given probability
 randomBool :: Number -> RandomState -> { value :: Boolean, newState :: RandomState }
 randomBool probability state =
-  let { value, newState } = randomDouble state
-  in { value: value < probability, newState }
+  let
+    { value, newState } = randomDouble state
+  in
+    { value: value < probability, newState }
